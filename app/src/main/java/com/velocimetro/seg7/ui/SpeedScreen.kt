@@ -171,10 +171,10 @@ private fun GpsBadge(state: SpeedUiState) {
         accuracy <= 30f -> Warning
         else -> Bad
     }
-    val label = if (accuracy == null) {
-        "SIN SEÑAL GPS"
-    } else {
-        "GPS ±${accuracy.roundToInt()} m"
+    val label = when {
+        accuracy == null -> "SIN SEÑAL GPS"
+        !state.hasFix -> "GPS DÉBIL ±${accuracy.roundToInt()} m"
+        else -> "GPS ±${accuracy.roundToInt()} m"
     }
 
     Row(verticalAlignment = Alignment.CenterVertically) {

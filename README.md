@@ -113,11 +113,12 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ### Indicador de señal
 
-| Color | Significado |
-|---|---|
-| Verde | Precisión ≤ 12 m — lectura confiable |
-| Ámbar | Precisión ≤ 30 m — usable, algo de ruido |
-| Rojo | Sin fix o precisión > 30 m — dato no confiable |
+| Color | Indicador | Significado |
+|---|---|---|
+| Verde | `GPS ±N m` | Lectura confiable |
+| Ámbar | `GPS ±N m` | Precisión regular — usable, algo de ruido |
+| Rojo | `GPS DÉBIL ±N m` | Hay posición pero la señal no alcanza — la velocidad no se actualiza |
+| Rojo | `SIN SEÑAL GPS` | No hay ninguna ubicación |
 
 ### Ajustes
 
@@ -171,6 +172,35 @@ Para que el número no tiemble se aplican tres filtros en
    no muestre ruido.
 2. **Media exponencial**: `nueva = anterior × 0,55 + instantánea × 0,45`.
 3. **Umbral de corte**: por debajo de 1 km/h vuelve a 0.
+
+### Validación de la lectura
+
+El GPS de un teléfono **miente con confianza**. Bajo techo o con poca visión del
+cielo, el chip puede reportar una velocidad falsa acompañada de una precisión
+excelente. Medido en interiores: `hAcc=2,2 m`, `sAcc=0,57 m/s` y
+`vel=14,8 m/s` (53 km/h) con el teléfono apoyado sobre una mesa.
+
+Por eso la velocidad solo se acepta si pasa **todos** estos controles:
+
+| Control | Umbral | Por qué |
+|---|---|---|
+| Precisión horizontal | ≤ 30 m | Descarta posiciones groseras |
+| Precisión de velocidad | ≤ 2,5 m/s | Descarta velocidades declaradas como imprecisas |
+| Satélites usados | ≥ 5 | Sin satélites suficientes no hay solución |
+| CN0 medio | ≥ 18 dB-Hz | **El control decisivo**: distingue cielo abierto de interiores |
+
+Los dos últimos se leen de `Location.getExtras()`, que los provee el stack de
+ubicación de Android. Si el dispositivo no los informa, esos controles se
+omiten.
+
+Mientras la lectura no es confiable:
+
+- La velocidad **se mantiene** hasta 5 segundos y después baja a 0.
+- El odómetro y la velocidad máxima **no se actualizan**.
+- El indicador pasa a rojo (`GPS DÉBIL`).
+
+Así, con el auto detenido y mala señal, la app muestra 0 en lugar de inventar
+una velocidad.
 
 ### Odómetro
 

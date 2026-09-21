@@ -12,6 +12,20 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 - Alerta de exceso de velocidad configurable.
 - Brillo automático al máximo en modo HUD.
 
+## [1.1.1] - 2026-09-21
+
+### Corregido
+
+- **Velocidad falsa con el auto detenido.** El chip GPS puede reportar una
+  velocidad alta acompañada de una precisión excelente. Medido en interiores:
+  `hAcc=2,2 m`, `sAcc=0,57 m/s` y `vel=14,8 m/s` (53 km/h) con el teléfono
+  quieto. Ahora la lectura se valida además por calidad de señal GNSS
+  (`satellites >= 5` y `meanCn0 >= 18` dB-Hz), que es lo que distingue cielo
+  abierto de interiores.
+- El odómetro y la velocidad máxima ya no se actualizan con lecturas no
+  confiables.
+- El indicador muestra `GPS DÉBIL` cuando hay posición pero la señal no alcanza.
+
 ## [1.1.0] - 2026-09-21
 
 ### Cambiado
@@ -43,6 +57,7 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 - Documentación: `README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`,
   `SECURITY.md` y `AGENTS.md`.
 
-[Sin publicar]: https://github.com/japentaca/velocimetro-7seg/compare/v1.1.0...HEAD
+[Sin publicar]: https://github.com/japentaca/velocimetro-7seg/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/japentaca/velocimetro-7seg/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/japentaca/velocimetro-7seg/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/japentaca/velocimetro-7seg/releases/tag/v1.0.0
