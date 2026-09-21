@@ -24,6 +24,9 @@ usarse como tablero dentro del auto.
 - **Modo HUD**: espejo horizontal y/o rotación 180° para reflejar la imagen en
   el parabrisas.
 - **Pantalla siempre encendida** y **orientación horizontal** forzada.
+- **Sin dependencias propietarias**: no usa Google Play Services, así que
+  funciona en teléfonos sin servicios de Google (Huawei, ROMs de-Googled) y
+  califica para repositorios de software libre como F-Droid.
 - **Todo se guarda localmente**. La app no tiene permisos de internet ni envía
   datos a ningún lado.
 
@@ -43,6 +46,7 @@ usarse como tablero dentro del auto.
 |---|---|
 | Android | 8.0 (API 26) o superior |
 | GPS | Receptor GPS (cualquier teléfono) |
+| Google Play Services | **No requiere** |
 | Compilar | JDK 17+ y el Android SDK con API 35 |
 
 La app **no** funciona en el emulador sin una ubicación simulada, porque
@@ -151,9 +155,14 @@ el reflejo.
 
 ### Lectura de velocidad
 
-Se usa `FusedLocationProviderClient` de Google Play Services con
-`PRIORITY_HIGH_ACCURACY` y una actualización cada 1 s (mínimo 500 ms). La
-velocidad instantánea que reporta el GPS viene en m/s y se convierte a km/h.
+Se usa el `LocationManager` de Android (`android.location`, parte del sistema)
+con el proveedor de GPS en alta precisión y una actualización cada 1 s (mínimo
+500 ms). La velocidad instantánea que reporta el GPS viene en m/s y se convierte
+a km/h.
+
+No se usa `FusedLocationProviderClient` ni ninguna otra dependencia de Google
+Play Services: la app es 100 % software libre y funciona en teléfonos sin
+servicios de Google.
 
 Para que el número no tiemble se aplican tres filtros en
 `SpeedViewModel.kt`:

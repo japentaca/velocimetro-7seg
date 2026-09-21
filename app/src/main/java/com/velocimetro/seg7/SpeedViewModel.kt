@@ -3,15 +3,13 @@ package com.velocimetro.seg7
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import android.location.LocationManager
 import android.os.Looper
+import androidx.core.location.LocationListenerCompat
+import androidx.core.location.LocationManagerCompat
+import androidx.core.location.LocationRequestCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,8 +32,8 @@ class SpeedViewModel : ViewModel() {
     private val _state = MutableStateFlow(SpeedUiState())
     val state: StateFlow<SpeedUiState> = _state.asStateFlow()
 
-    private var client: FusedLocationProviderClient? = null
-    private var callback: LocationCallback? = null
+    private var locationManager: LocationManager? = null
+    private var listener: LocationListenerCompat? = null
     private var lastLocation: Location? = null
     private var smoothedKmh = 0f
     private var started = false
@@ -47,22 +45,35 @@ class SpeedViewModel : ViewModel() {
         started = true
         tripStartMs = System.currentTimeMillis()
 
-        val fused = LocationServices.getFusedLocationProviderClient(context)
-        client = fused
+        val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager = manager
 
-        val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000L)
+        val provider = when {
+            manager.allProviders.contains(LocationManager.GPS_PROVIDER) -> LocationManager.GPS_PROVIDER
+            manager.allProviders.contains(LocationManager.NETWORK_PROVIDER) -> LocationManager.NETWORK_PROVIDER
+            else -> LocationManager.GPS_PROVIDER
+        }
+
+        val request = LocationRequestCompat.Builder(1000L)
+            .setQuality(LocationRequestCompat.QUALITY_HIGH_ACCURACY)
             .setMinUpdateIntervalMillis(500L)
             .setMinUpdateDistanceMeters(0f)
-            .setWaitForAccurateLocation(false)
             .build()
 
-        val cb = object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult) {
-                result.lastLocation?.let { onLocation(it) }
-            }
+        val locationListener = LocationListenerCompat { location -> onLocation(location) }
+        listener = locationListener
+
+        try {
+            LocationManagerCompat.requestLocationUpdates(
+                manager,
+                provider,
+                request,
+                locationListener,
+                Looper.getMainLooper()
+            )
+        } catch (e: SecurityException) {
+            _state.update { it.copy(hasFix = false) }
         }
-        callback = cb
-        fused.requestLocationUpdates(request, cb, Looper.getMainLooper())
 
         viewModelScope.launch {
             while (true) {
@@ -91,7 +102,7 @@ class SpeedViewModel : ViewModel() {
         val previous = lastLocation
         var addedMeters = 0.0
         if (previous != null && usable) {
-            val dt = ((location.time - previous.time) / 1000.0).coerceIn(0.0, 5.0)
+            val dt = deltaSeconds(previous, location).coerceIn(0.0, 5.0)
             if (dt > 0.0) {
                 val delta = if (location.hasSpeed()) {
                     (smoothedKmh / 3.6f).toDouble() * dt
@@ -116,6 +127,16 @@ class SpeedViewModel : ViewModel() {
         }
     }
 
+    private fun deltaSeconds(previous: Location, current: Location): Double {
+        val previousNanos = previous.elapsedRealtimeNanos
+        val currentNanos = current.elapsedRealtimeNanos
+        return if (previousNanos > 0L && currentNanos > previousNanos) {
+            (currentNanos - previousNanos) / 1_000_000_000.0
+        } else {
+            (current.time - previous.time) / 1000.0
+        }
+    }
+
     fun resetTrip() {
         tripStartMs = System.currentTimeMillis()
         lastLocation = null
@@ -128,8 +149,10 @@ class SpeedViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        val cb = callback
-        val fused = client
-        if (cb != null && fused != null) fused.removeLocationUpdates(cb)
+        val manager = locationManager
+        val locationListener = listener
+        if (manager != null && locationListener != null) {
+            manager.removeUpdates(locationListener)
+        }
     }
 }

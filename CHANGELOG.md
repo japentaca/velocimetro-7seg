@@ -12,6 +12,17 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 - Alerta de exceso de velocidad configurable.
 - Brillo automático al máximo en modo HUD.
 
+## [1.1.0] - 2026-09-21
+
+### Cambiado
+
+- **Se eliminó la dependencia de Google Play Services.** La lectura de velocidad
+  ahora usa el `LocationManager` de Android (`android.location`) en lugar de
+  `FusedLocationProviderClient`. La app es 100 % software libre, pesa ~650 KB
+  menos y funciona en teléfonos sin servicios de Google.
+- El cálculo del intervalo entre muestras usa `elapsedRealtimeNanos` en lugar del
+  reloj de pared, para que un ajuste de hora no altere el odómetro.
+
 ## [1.0.0] - 2026-09-20
 
 ### Agregado
@@ -32,5 +43,6 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 - Documentación: `README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`,
   `SECURITY.md` y `AGENTS.md`.
 
-[Sin publicar]: https://github.com/japentaca/velocimetro-7seg/compare/v1.0.0...HEAD
+[Sin publicar]: https://github.com/japentaca/velocimetro-7seg/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/japentaca/velocimetro-7seg/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/japentaca/velocimetro-7seg/releases/tag/v1.0.0
