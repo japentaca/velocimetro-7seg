@@ -64,6 +64,38 @@ conectada a la consola, la sesión queda esperando indefinidamente. Antes de
 ejecutar cualquier cosa, leé [`AGENTS.md`](AGENTS.md), que documenta el patrón
 seguro (`Start-Process` + redirección a archivo + `Wait-Process` con timeout).
 
+## Compilar una release firmada
+
+La firma release se configura con un archivo `keystore.properties` en la raíz
+del proyecto, que **no se versiona**:
+
+```properties
+storeFile=C:/ruta/al/keystore.jks
+storePassword=...
+keyAlias=...
+keyPassword=...
+```
+
+Si el archivo no existe, `assembleRelease` compila un APK sin firmar y
+`assembleDebug` sigue funcionando igual, así que podés contribuir sin tener la
+clave.
+
+Para generar un keystore nuevo:
+
+```bash
+keytool -genkeypair -v -keystore velocimetro-7seg.jks -alias velocimetro \
+  -keyalg RSA -keysize 4096 -validity 10000
+```
+
+**Respaldá el `.jks` y la contraseña.** Si los perdés no vas a poder publicar
+actualizaciones que Android reconozca como la misma app.
+
+Verificar la firma del APK:
+
+```bash
+apksigner verify --print-certs app/build/outputs/apk/release/app-release.apk
+```
+
 ## Estilo de commits
 
 Mensajes cortos, en imperativo y en español, con el alcance adelante:

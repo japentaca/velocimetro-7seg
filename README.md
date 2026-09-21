@@ -54,7 +54,8 @@ necesita un receptor GPS real para medir velocidad.
 
 ### Opción A: APK ya compilado
 
-1. Descargá `app-debug.apk` de la sección [Releases](../../releases).
+1. Descargá el APK de la sección [Releases](../../releases)
+   (por ejemplo `velocimetro-7seg-1.0.0.apk`).
 2. Copialo al teléfono e instalalo (hay que permitir "instalar apps de
    orígenes desconocidos").
 
