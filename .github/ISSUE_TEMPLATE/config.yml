@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Reportar un problema de seguridad
+    url: https://github.com/japentaca/velocimetro-7seg/security/policy
+    about: No abras un issue público para vulnerabilidades. Leé la política de seguridad.

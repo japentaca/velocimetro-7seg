@@ -1,0 +1,33 @@
+# Android / Gradle
+*.iml
+.gradle/
+.kotlin/
+/local.properties
+local.properties
+/.idea/
+.DS_Store
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+build/
+out/
+release/
+
+# Artefactos de build
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Logs y temporales
+*.log
+*.hprof
+
+# Firma (nunca subir)
+*.jks
+*.keystore
+keystore.properties
+signing.properties

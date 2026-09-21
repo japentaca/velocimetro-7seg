@@ -1,0 +1,91 @@
+name: Reportar un bug
+description: Algo no funciona como debería
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por tomarte el tiempo de reportar. Antes de seguir, revisá que no
+        exista ya un issue abierto con el mismo problema.
+
+        **Ojo:** la precisión del GPS depende del entorno y del hardware del
+        teléfono. Eso no es un bug salvo que haya un error de cálculo evidente.
+
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción del problema
+      description: Qué pasa y qué esperabas que pasara.
+      placeholder: |
+        La velocidad mostrada se queda congelada en 0 después de un rato...
+    validations:
+      required: true
+
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducirlo
+      placeholder: |
+        1. Abrir la app
+        2. Activar espejo horizontal
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: dispositivo
+    attributes:
+      label: Dispositivo
+      description: Modelo del teléfono
+      placeholder: Samsung Galaxy A54
+    validations:
+      required: true
+
+  - type: input
+    id: android
+    attributes:
+      label: Versión de Android
+      placeholder: Android 14
+    validations:
+      required: true
+
+  - type: input
+    id: version_app
+    attributes:
+      label: Versión de la app
+      description: Se ve en el APK o en `versionName` de `app/build.gradle.kts`
+      placeholder: 1.0.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ajustes
+    attributes:
+      label: Modo HUD activo
+      options:
+        - "No, vista normal"
+        - "Espejo horizontal"
+        - "Girar 180°"
+        - "Espejo + girar 180°"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Si hay un cierre inesperado, pegá la salida de:
+        `adb logcat -d -s Velocimetro:* AndroidRuntime:E`
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: capturas
+    attributes:
+      label: Capturas o video
+      description: Arrastrá acá las imágenes si el problema es visual.
+    validations:
+      required: false

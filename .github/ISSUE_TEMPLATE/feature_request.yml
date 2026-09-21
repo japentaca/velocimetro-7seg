@@ -1,0 +1,46 @@
+name: Proponer una funcionalidad
+description: Una idea para mejorar la app
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de proponer, revisá que no exista ya un issue abierto con la misma
+        idea. Tené en cuenta que la app prioriza la **legibilidad a distancia** y
+        el **consumo de batería**: cualquier agregado que compita con eso tiene
+        que justificarlo.
+
+  - type: textarea
+    id: problema
+    attributes:
+      label: ¿Qué problema resuelve?
+      description: Describí la necesidad, no la solución.
+      placeholder: |
+        De noche el verde encandila y no puedo bajar el brillo sin salir de la app...
+    validations:
+      required: true
+
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+      description: Cómo imaginás que funcionaría.
+    validations:
+      required: true
+
+  - type: textarea
+    id: uso
+    attributes:
+      label: Cómo la usarías en el auto
+      placeholder: |
+        La activaría solo de noche, antes de arrancar...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas consideradas
+    validations:
+      required: false

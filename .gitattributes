@@ -1,0 +1,22 @@
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+gradlew text eol=lf
+gradlew.bat text eol=crlf
+
+*.jar binary
+*.png binary
+*.jpg binary
+*.webp binary
+*.apk binary
+*.aab binary
+*.jks binary
+
+gradle/wrapper/gradle-wrapper.jar binary
+
+*.md text
+*.kt text
+*.kts text
+*.xml text
+*.yml text
